@@ -1,4 +1,4 @@
-## Appendix A - conversion of Tasmanian devil scaffold labels ##
+## Appendix A.1 - conversion of Tasmanian devil scaffold labels ##
 
 ## reading in the conversion file ##
 conversion <- read.csv(file = "Scripts/Data/Devil_7.0_Scaffolds.txt",skip = 32,sep = "\t",header=T,stringsAsFactors = F)
