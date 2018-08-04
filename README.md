@@ -1,2 +1,2 @@
 # Fusion-Genes-in-Transmissible-Cancers
-Computational Biology MPhil Project
+R code used in my Computational Biology MPhil Project - Expressed Fusion Genes in Transmissible Cancers in Dogs and Tasmanian Devils.
