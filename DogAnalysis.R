@@ -92,7 +92,10 @@ for (a in 1:length(dog_upset)){
   }
 }
 
-heatmaply code here
+# dog heatmap using all data:
+heatmaply(dcorr_matrix, k_col = 1,color = rev(magma(100)),plotmethod="plotly")
+# dog heatmap with 550 and 683 samples removed:
+heatmaply(dcorr_matrix[-c(6,8),-c(6,8)], k_col = 1,color = rev(magma(100)),plotmethod="plotly")
 
 
 ## Repeated dog analysis excluding JAFFA calls competely:
@@ -159,7 +162,7 @@ for (a in 1:length(dog_upset_noJAF)){
 }
 
 # heatmap when excluding JAFFA calls
-
+heatmaply(noJAFcorr_matrix, k_col = 1,color = rev(magma(100)),plotmethod="plotly")
 
 ## Overlapping 59 fusions = same set as with JAFFA; use these to make a circos plot and a table:
 part1 <- intersect(dog_upset_noJAF$`366T`,dog_upset_noJAF$`410T`)
