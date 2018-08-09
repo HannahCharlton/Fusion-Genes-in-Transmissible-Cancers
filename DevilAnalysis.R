@@ -95,6 +95,30 @@ dft2_renamed <- naming_genes2(dft2_consensus)
 stargazer(dft2_renamed[,c(2,3,4,8,9,10,14,15,16)],summary=F)
 new_labelledcircos(dft2_renamed)
 
+## generating UpSet plot for devil data
+require("UpSetR"); require(viridis)
+data_upset2 <- lapply(tumours_filtered, function(x) {return(x$FusionName)})
+upset(fromList(data_upset2),nsets = 8,order.by="freq",nintersects = 30, text.scale = 1.5,
+      mainbar.y.label = "Number of Shared Fusions", sets.x.label = "Fusions Per Sample",
+      main.bar.color = plasma(10,alpha=0.5)[3], sets.bar.color = plasma(10,alpha=0.5)[8],
+      ## queries used to highlight intersections correspondoing to DFT1 and DFT2
+      queries = list(list(query = intersects, params = list("85T", "86T", "87T","88T","GW1","GW2"), color=viridis(10,alpha=0.8)[8],active = T),
+                     list(query = intersects, params = list("GW7","GW8"), color = viridis(10,alpha=0.8)[6], active = T)))
+
+## generating correlation matrix and heatmap for devil data
+length_list <- lapply(tumours_filtered, function(X) {nrow(X)})
+longest_list <- length_list[[which(length_list == max(unlist(length_list)))]]
+corr_matrix <- matrix(NA,ncol(df),ncol(df))
+colnames(corr_matrix) <- rownames(corr_matrix) <- devilfiles[-c(9,10)]
+for (a in 1:length(data_upset2)){
+  for (b in 1:length(data_upset2)){
+    corr_matrix[a,b] <- length(intersect(data_upset2[[a]],data_upset2[[b]]))
+    corr_matrix[a,b] <- corr_matrix[a,b] / longest_list
+  }
+}
+require("ggplot2"); require("plotly"); require("heatmaply")
+heatmaply(corr_matrix, k_col = 1,color = rev(magma(100)))
+
 ## investigating whether any of the retained fusions were actually called by multiple tools:
 combine_no_filter <- function(input1,input2){
   data <- rbind(input1,input2)
@@ -129,28 +153,3 @@ SVs_consensus <- SV_match(alltumour_consensus)
 SVs_dft1 <- SV_match(dft1_renamed)
 SVs_dft2 <- SV_match(dft2_renamed)
 SVs_devils <- lapply(all_filtered, function(x) {SV_match(x)})
-
-## generating UpSet plot for devil data
-require("UpSetR"); require(viridis)
-data_upset2 <- lapply(tumours_filtered, function(x) {return(x$FusionName)})
-upset(fromList(data_upset2),nsets = 8,order.by="freq",nintersects = 30, text.scale = 1.5,
-      mainbar.y.label = "Number of Shared Fusions", sets.x.label = "Fusions Per Sample",
-      main.bar.color = plasma(10,alpha=0.5)[3], sets.bar.color = plasma(10,alpha=0.5)[8],
-      ## queries used to highlight intersections correspondoing to DFT1 and DFT2
-      queries = list(list(query = intersects, params = list("85T", "86T", "87T","88T","GW1","GW2"), color=viridis(10,alpha=0.8)[8],active = T),
-                     list(query = intersects, params = list("GW7","GW8"), color = viridis(10,alpha=0.8)[6], active = T)))
-
-## generating correlation matrix and heatmap for devil data
-length_list <- lapply(tumours_filtered, function(X) {nrow(X)})
-longest_list <- length_list[[which(length_list == max(unlist(length_list)))]]
-corr_matrix <- matrix(NA,ncol(df),ncol(df))
-colnames(corr_matrix) <- rownames(corr_matrix) <- devilfiles[-c(9,10)]
-for (a in 1:length(data_upset2)){
-  for (b in 1:length(data_upset2)){
-    corr_matrix[a,b] <- length(intersect(data_upset2[[a]],data_upset2[[b]]))
-    corr_matrix[a,b] <- corr_matrix[a,b] / longest_list
-  }
-}
-require("ggplot2"); require("plotly"); require("heatmaply")
-heatmaply(corr_matrix, k_col = 1,color = rev(magma(100)))
-
