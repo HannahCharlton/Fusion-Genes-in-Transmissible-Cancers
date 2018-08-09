@@ -151,4 +151,6 @@ for (a in 1:length(data_upset2)){
     corr_matrix[a,b] <- corr_matrix[a,b] / longest_list
   }
 }
+require("ggplot2"); require("plotly"); require("heatmaply")
+heatmaply(corr_matrix, k_col = 1,color = rev(magma(100)))
 
